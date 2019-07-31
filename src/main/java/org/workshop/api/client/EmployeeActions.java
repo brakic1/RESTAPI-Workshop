@@ -1,16 +1,20 @@
-package org.worksop.api.client;
+package org.workshop.api.client;
 
 import static io.restassured.RestAssured.given;
+import static org.workshop.api.client.Constants.*;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapperType;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import java.util.List;
 
 import org.workshop.api.models.Employee;
-import org.workshop.api.models.MessageResponse;
+import org.workshop.api.models.NewEmployee;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
-import static org.worksop.api.client.Constants.BASE_URL;
+import com.google.gson.Gson;
 
 
 public class EmployeeActions {
@@ -24,31 +28,36 @@ public class EmployeeActions {
 	                .log(LogDetail.ALL).build();
 	    }
 
-	    public Employee addNewPet(Employee request) {
-	        return given(requestSpecification)
-	                .body(request)
-	                .post(BASE_URL).as(Employee.class);
+	    public NewEmployee addNewEmployee(NewEmployee request) {
+	         Response response = given(requestSpecification)
+	                .body(request, ObjectMapperType.GSON)
+	                .post(CREATE_ENDPOINT);
+	         Type newEmployeeType = new TypeToken<NewEmployee>(){}.getType();
+	         return convertResponseToObj(response, newEmployeeType);
 	    }
 
-	    public List<Employee> EmployeeById(String id) {
-	        return given(requestSpecification)
+	    public Employee getEmployeeById(String id) {
+	         Response response = given(requestSpecification)
 	                .pathParam("id", id)
-	                .get(BASE_URL + "/employee/{id}")
-	                .then().log().all()
-	                .extract().body()
-	                .jsonPath().getList("", Employee.class);
+	                .get(EMPLOYEE_ENDPOINT + "/{id}");
+	         Type employeeType = new TypeToken<Employee>(){}.getType();
+	         return convertResponseToObj(response, employeeType);
 	    }
 
 	    public void deleteEmployee(String employeeId) {
-	        given(requestSpecification)
-	                .pathParam("id", employeeId)
-	                .delete(BASE_URL + "/delete/{id}");
+	         given(requestSpecification)
+	        	.pathParam("id", employeeId)
+	            .expect().statusCode(200)
+	         .when()
+	             .delete(DELETE_ENDPOINT + "/{id}");
 	    }
 
-	    public void deleteEmployee(Employee employee) {
-	        given(requestSpecification)
-	                .pathParam("id", employee.getId())
-	                .delete(BASE_URL + "/delete/{id}");
+	    public Response deleteEmployee(NewEmployee employee) {
+	         return given(requestSpecification)
+	        	.pathParam("id", employee.getId())
+	        	.expect().statusCode(200)
+	    	 .when()
+	            .delete(DELETE_ENDPOINT + "/{id}");
 	    }
 
 	    public boolean isEmployeeExists(Employee employee) {
@@ -56,11 +65,17 @@ public class EmployeeActions {
 	    }
 
 	    public boolean isEmployeeExists(String employeeId) {
-	        return !given(requestSpecification)
+	        Response response = given(requestSpecification)
 	                .pathParam("id", employeeId)
-	                .get(BASE_URL + "/employee/{id}")
-	                .then()
-	                .extract().body().jsonPath().getObject("", MessageResponse.class)
-	                .getMessage().equals("Employee not found");
+	                .get(EMPLOYEE_ENDPOINT + "/{id}");
+	        return (response.getStatusCode()==200);
+	    }
+	    
+	    public static <T> T convertResponseToObj (Response response, Type type) {
+	    	String json = response.getBody().asString();
+			//Creation of JsonPath object
+			Gson g = new Gson();
+			T t =  g.fromJson(json, type);
+			return t;
 	    }
 }

@@ -1,29 +1,33 @@
 package org.workshop.api.models;
 
-import java.util.Objects;
+
 import org.apache.commons.lang3.RandomStringUtils;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Employee
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Employee {
 	  	private String id = null;
 	    private String employee_name = null;
-	    private Integer employee_salary = null;
-	    private Integer employee_age = null;
+	    private String employee_salary = null;
+	    private String employee_age = null;
 	    private String profile_image = null;
 
-	    public Employee (String id, String employee_name, Integer employee_salary, Integer employee_age, String profile_image) {
+	    public Employee (String id, String name, String salary, String age, String profile_image) {
 	        this.id = id;
-	        this.employee_name = employee_name;
-	        this.employee_salary = employee_salary;
-	        this.employee_age = employee_age;
+	        this.employee_name = name;
+	        this.employee_salary = salary;
+	        this.employee_age = age;
 	        this.profile_image = profile_image;
 	    }
 
 	    public Employee() {
-	        id = RandomStringUtils.randomNumeric(10);
-	        employee_name = "EmployeeName" + RandomStringUtils.randomAlphabetic(8);
+	        this.id = RandomStringUtils.randomNumeric(10);
+	        this.employee_name = null;
 	    }
 
 	    public Employee id(String id) {
@@ -54,12 +58,12 @@ public class Employee {
 	    public String getEmployeeName() {
 	        return employee_name;
 	    }
-
-	    public void setEmployeeName(String employee_name) {
-	        this.employee_name = employee_name;
+ 
+	    public void setEmployeeName(String name) {
+	        this.employee_name = name;
 	    }
 
-	    public Employee employeeName (String name) {
+	    public Employee name (String name) {
 	        this.employee_name = name;
 	        return this;
 	    }
@@ -70,15 +74,15 @@ public class Employee {
 	     * @return employee_salary
 	     **/
 
-	    public Integer getEmployeeSalary() {
+	    public String getEmployeeSalary() {
 	        return employee_salary;
 	    }
 
-	    public void setEmployeeSalary(Integer employee_salary) {
-	        this.employee_salary = employee_salary;
+	    public void setEmployeeSalary(String salary) {
+	        this.employee_salary = salary;
 	    }
 
-	    public Employee employeeSalary (Integer salary) {
+	    public Employee salary (String salary) {
 	        this.employee_salary = salary;
 	        return this;
 	    }
@@ -89,15 +93,15 @@ public class Employee {
 	     * @return employee_age
 	     **/
 
-	    public Integer getEmployeeAge() {
+	    public String getEmployeeAge() {
 	        return employee_age;
 	    }
 
-	    public void setEmployeeAge(Integer employee_age) {
-	        this.employee_age = employee_age;
+	    public void setEmployeeAge(String age) {
+	        this.employee_age = age;
 	    }
 
-	    public Employee employeeAge (Integer age) {
+	    public Employee age (String age) {
 	        this.employee_age = age;
 	        return this;
 	    }
@@ -116,57 +120,9 @@ public class Employee {
 	        this.profile_image = profile_image;
 	    }
 
-	    public Employee profileImage (String image) {
-	        this.profile_image = image;
+	    public Employee profile_image (String profile_image) {
+	        this.profile_image = profile_image;
 	        return this;
 	    }
-
-
-	    @Override
-	    public boolean equals(Object o) {
-	        if (this == o) {
-	            return true;
-	        }
-	        if (o == null || getClass() != o.getClass()) {
-	            return false;
-	        }
-	        Employee employee = (Employee) o;
-	        return 	Objects.equals(this.id, employee.id) &&
-	                Objects.equals(this.employee_name, employee.employee_name) &&
-	                Objects.equals(this.employee_salary, employee.employee_salary) &&
-	                Objects.equals(this.employee_age, employee.employee_age) &&
-	                Objects.equals(this.profile_image, employee.profile_image);
-	    }
-
-	    @Override
-	    public int hashCode() {
-	        return Objects.hash(id, employee_name, employee_salary, employee_age, profile_image);
-	    }
-
-	    @Override
-	    public String toString() {
-	        StringBuilder sb = new StringBuilder();
-	        sb.append("class Employee {\n");
-
-	        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-	        sb.append("    category: ").append(toIndentedString(employee_name)).append("\n");
-	        sb.append("    name: ").append(toIndentedString(employee_salary)).append("\n");
-	        sb.append("    photoUrls: ").append(toIndentedString(employee_age)).append("\n");
-	        sb.append("    tags: ").append(toIndentedString(profile_image)).append("\n");
-	        sb.append("}");
-	        return sb.toString();
-	    }
-
-	    /**
-	     * Convert the given object to string with each line indented by 4 spaces
-	     * (except the first line).
-	     */
-	    private String toIndentedString(Object o) {
-	        if (o == null) {
-	            return "null";
-	        }
-	        return o.toString().replace("\n", "\n    ");
-	    }
-
+	       
 }
-

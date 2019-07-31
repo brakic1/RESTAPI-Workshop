@@ -1,7 +1,8 @@
 package org.workshop.api.tests;
 
 import static io.restassured.RestAssured.given;
-import static org.worksop.api.client.Constants.BASE_URL;
+import static org.workshop.api.client.Constants.BASE_URL;
+
 import org.testng.annotations.Test;
 import io.restassured.http.ContentType;
 
