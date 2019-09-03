@@ -1,29 +1,72 @@
 package org.workshop.api.tests;
 
-import static io.restassured.RestAssured.given;
-import static org.workshop.api.client.Constants.BASE_URL;
+import java.util.List;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.workshop.api.common.BaseRequest;
+import org.workshop.api.models.Employee;
+import org.workshop.api.models.NewEmployee;
+import org.workshop.api.utilities.ConfigUtility;
+import org.workshop.api.utilities.JsonUtility;
+
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapperType;
+import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
 
-public class EmployeeTests  {
+public class EmployeeTests extends BaseRequest {
 	
-public static String EMPLOYEE_ENDPOINT = BASE_URL + "/employee";
+private static String host;
+private static String path;
 
-    @Test
-    public void getEmployeeNameById() {
-        given()
-        	.baseUri(BASE_URL)
-        	.log().everything()
-        	.contentType(ContentType.JSON)
-        	.pathParam("id", "1472")
-        .when()
-        	.get(EMPLOYEE_ENDPOINT + "/{id}")
-        .then()
-        	.log().body()
-        	.statusCode(200)
-        	.extract()
-        	.path("employee_name")
-        	.equals("branka");
-    }
+	@BeforeClass
+	public void setUp() {
+		host = ConfigUtility.getProperty("BASE_URL", "application.properties");
+		setHost(host);
+		setContentType(ContentType.JSON);
+		setRequestBodyMapper(ObjectMapperType.GSON);
+		headerInit();
+	}
+	
+	//@Test
+	public void geAllEmployees() {
+
+		path = ConfigUtility.getProperty("EMPLOYEES_ENDPOINT", "application.properties");
+		setPath(path);
+		Response response = doGetRequest();
+		
+		List<Employee> employees = response
+				.body()
+				.jsonPath().getList("", Employee.class);
+	
+		for (Employee employee : employees) {
+			Assert.assertNotNull(employee);
+		}
+	}
+	
+	@Test
+	public void addNewEmployee() {
+
+		path = ConfigUtility.getProperty("CREATE_ENDPOINT", "application.properties");
+		setPath(path);
+		
+		NewEmployee employee = new NewEmployee();
+		
+		setRequestBody(JsonUtility.POJOToJson(employee));
+		RestAssured.registerParser("text/html", Parser.JSON);
+		Response response = doPostRequest();
+		
+		NewEmployee responseObj = response.getBody().as(NewEmployee.class);
+        
+        Assert.assertEquals(responseObj.getEmployeeName(), employee.getEmployeeName());
+	}
+	
+	@AfterMethod
+	public void tearDown() {
+		cleanUp();
+	}
 }

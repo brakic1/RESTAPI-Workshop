@@ -3,8 +3,8 @@ package org.workshop.api.models;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * New Employee - used for post request for creating a new employee
@@ -17,19 +17,20 @@ public class NewEmployee {
 	    private String age = null;
 	    private String profile_image = null;
 
-	    public NewEmployee (String id, String name, String salary, String age, String profile_image) {
+	    public NewEmployee (@JsonProperty("id")String id, @JsonProperty("name") String name, @JsonProperty("salary") String salary, @JsonProperty("age") String age, @JsonProperty("profile_image") String profile_image) {
 	        this.id = id;
 	        this.name = name;
 	        this.salary = salary;
 	        this.age = age;
 	        this.profile_image = profile_image;
 	    }
-
+	    
 	    public NewEmployee() {
-	        this.id = RandomStringUtils.randomNumeric(10);
-	        this.name = null;
+	        this.name = RandomStringUtils.randomAlphabetic(10);
+	        this.salary = RandomStringUtils.randomNumeric(4).toString();
+	        this.age = RandomStringUtils.randomNumeric(2).toString();
 	    }
-
+    
 	    public NewEmployee id(String id) {
 	        this.id = id;
 	        return this;
