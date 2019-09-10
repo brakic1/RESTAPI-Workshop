@@ -20,6 +20,7 @@ public class HttpResponseUtility {
 
 	/**
 	 * Get cookies from response
+	 * 
 	 * @param response
 	 * @return
 	 */
@@ -37,15 +38,18 @@ public class HttpResponseUtility {
 		String JsonResult = response.asString();
 		return JsonResult;
 	}
+
 	/**
 	 * Convert response to json object
+	 * 
 	 * @param response
 	 * @return
 	 */
-    public static JsonPath getJsonPath (Response response) {
-        String json = response.asString();
-        return new JsonPath(json);
-    }
+	public static JsonPath getJsonPath(Response response) {
+		String json = response.asString();
+		return new JsonPath(json);
+	}
+
 	/**
 	 * Get value as String from the Json response providing path of the value
 	 * 
