@@ -9,7 +9,7 @@ import io.restassured.mapper.ObjectMapperType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-public class BaseRequest {
+public class BaseRequest extends RestClient {
 
 	private String host;
 	private String path;
@@ -99,81 +99,37 @@ public class BaseRequest {
 		return params.get(getFirstKey(params));
 	}
 
-	public Response doGetRequest() {
-		return this.response = RestClient.getResponseForMethod("GET", getRequestSpecification());
+	public Response doRequest(String method, RequestSpecification requestSpecification) {
+		return this.response = getResponseForMethod(method, requestSpecification);
 	}
-
-	public Response doPostRequest() {
-		return this.response = RestClient.getResponseForMethod("POST", postRequestSpecification());
-	}
-
-	public Response doPutReques() {
-		return this.response = RestClient.getResponseForMethod("PUT", postRequestSpecification());
-	}
-
-	public Response doDeleteRequest() {
-		return this.response = RestClient.getResponseForMethod("DELETE", getRequestSpecification());
-	}
-
-	public Response doGetRequestWithQueryParm() {
-		return this.response = RestClient.getResponseForMethod("GET", getRequestSpecificationWithQueryParm());
-	}
-
-	public Response doPostRequestWithQueryParm() {
-		return this.response = RestClient.getResponseForMethod("POST", postRequestSpecificationWithQueryParm());
-	}
-
-	public Response doPutRequestWithQueryParm() {
-		return this.response = RestClient.getResponseForMethod("PUT", postRequestSpecificationWithQueryParm());
-	}
-
-	public Response doDeleteRequestWithQueryParm() {
-		return this.response = RestClient.getResponseForMethod("DELETE", getRequestSpecificationWithQueryParm());
-	}
-
-	public Response doGetRequestWithPathParm() {
-		return this.response = RestClient.getResponseForMethod("GET", getRequestSpecificationWithPathParm());
-	}
-
-	public Response doPostRequestWithPathParm() {
-		return this.response = RestClient.getResponseForMethod("POST", postRequestSpecificationWithPathParm());
-	}
-
-	public Response doPutRequestWithPathParm() {
-		return this.response = RestClient.getResponseForMethod("PUT", postRequestSpecificationWithPathParm());
-	}
-
-	public Response doDeleteRequestWithPathParm() {
-		return this.response = RestClient.getResponseForMethod("DELETE", getRequestSpecificationWithPathParm());
-	}
-
-	private RequestSpecification getRequestSpecification() {
+	
+	public RequestSpecification requestSpecification() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).build();
 	}
 
-	private RequestSpecification postRequestSpecification() {
+	public RequestSpecification requestSpecificationWithBody() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).setBody(requestBody, mapper).build();
 	}
 
-	private RequestSpecification getRequestSpecificationWithQueryParm() {
+	public RequestSpecification requestSpecificationWithQueryParm() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).addQueryParam(getFirstKey(queryParams), getFirstValue(queryParams)).build();
 	}
 
-	private RequestSpecification postRequestSpecificationWithQueryParm() {
+	public RequestSpecification requestSpecificationWithBodyAndQueryParm() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).addQueryParam(getFirstKey(queryParams), getFirstValue(queryParams))
 				.setBody(requestBody, mapper).build();
 	}
 
-	private RequestSpecification getRequestSpecificationWithPathParm() {
+	public RequestSpecification requestSpecificationWithPathParm() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).addPathParam(getFirstKey(pathParams), getFirstValue(pathParams)).build();
 	}
 
-	private RequestSpecification postRequestSpecificationWithPathParm() {
+	public RequestSpecification requestSpecificationWithBodyAndPathParm() {
 		return new RequestSpecBuilder().setBaseUri(host).setBasePath(path).setContentType(contentType)
 				.addHeaders(headers).addPathParam(getFirstKey(pathParams), getFirstValue(pathParams))
 				.setBody(requestBody, mapper).build();

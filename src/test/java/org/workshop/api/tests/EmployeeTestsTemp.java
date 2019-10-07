@@ -22,8 +22,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class EmployeeTests extends BaseRequest {
-
+public class EmployeeTestsTemp extends BaseRequest {
 	@BeforeClass
 	public void setUp() {
 		super.setUp();
@@ -97,47 +96,27 @@ public class EmployeeTests extends BaseRequest {
 	@Test
 	public void updateEmployee() {
 		// arrange
-		NewEmployee employee = createEmployee();
-		String id = employee.getId();
-		setPath(ConfigUtility.getProperty("UPDATE_ENDPOINT", "application.properties") + "/{id}");
-		setPathParams("id", id);
-		// change employee and used the changed object for body request
-		NewEmployee updatedEmployee = employee.name(RandomStringUtils.randomAlphabetic(10));
-		setRequestBody(updatedEmployee);
+		
 		// act
-		Response response = doRequest("PUT", requestSpecificationWithBodyAndPathParm());
+	
 		// assert
-		NewEmployee responseObj = response.getBody().as(NewEmployee.class);
-		Assert.assertEquals(responseObj.getEmployeeName(), updatedEmployee.getEmployeeName());
-		Assert.assertEquals(response.getBody().jsonPath().get("name"), updatedEmployee.getEmployeeName());
+	
 		// clean data
-		removeEmployee(id);
 	}
 
 	@Test
 	public void deleteEmployee() {
 		// arrange
-		setPathParams("id", createEmployee().getId());
-		setPath(ConfigUtility.getProperty("DELETE_ENDPOINT", "application.properties") + "/{id}");
+		
 		// act
-		Response response = doRequest("DELETE", requestSpecificationWithPathParm());
+		
 		// assert
-		Assert.assertTrue(
-				response.getBody().asString().endsWith("{\"success\":{\"text\":\"successfully! deleted Records\"}}"));
-	}
-
-	@Test
-	public void deleteEmployeeUsingMatchers() {
-		// arrange
-		String path = ConfigUtility.getProperty("DELETE_ENDPOINT", "application.properties");
-		String baseUrl = ConfigUtility.getProperty("BASE_URL", "application.properties");
-		// act and assert
-		RestAssured.delete(baseUrl + path + "/" + createEmployee().getId()).then().assertThat()
-				.body(equalTo("{\"success\":{\"text\":\"successfully! deleted Records\"}}"));
+		
 	}
 
 	@AfterMethod
 	public void tearDown() {
 		cleanUp();
 	}
+	
 }

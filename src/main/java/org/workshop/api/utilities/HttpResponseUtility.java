@@ -32,15 +32,15 @@ public class HttpResponseUtility {
 	 * Convert response to string
 	 * 
 	 * @param response
-	 * @return JsonResult
+	 * @return Result
 	 */
-	public static String GetJsonResult(Response response) {
-		String JsonResult = response.asString();
-		return JsonResult;
+	public static String GetResult(Response response) {
+		String Result = response.asString();
+		return Result;
 	}
 
 	/**
-	 * Convert response to json object
+	 * Convert response to JsonPath
 	 * 
 	 * @param response
 	 * @return
