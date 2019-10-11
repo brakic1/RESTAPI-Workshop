@@ -9,18 +9,22 @@ import io.restassured.specification.RequestSpecification;
  * @requestSpecification specified headers and paths under test
  * @return null if method is not supported
  */
-public class RestClient {
+public final class RestClient {
+	// Private constructor to prevent instantiation
+	private RestClient() {
+		throw new UnsupportedOperationException();
+	}
 
-	public static Response getResponseForMethod(String method, RequestSpecification requestSpecification) {
+	public static Response getResponseForMethod(RestMethods method, RequestSpecification requestSpecification) {
 
 		switch (method) {
-		case "GET":
+		case GET:
 			return getRequest(requestSpecification);
-		case "POST":
+		case POST:
 			return postRequest(requestSpecification);
-		case "DELETE":
+		case DELETE:
 			return deleteRequest(requestSpecification);
-		case "PUT":
+		case PUT:
 			return putRequest(requestSpecification);
 		default:
 			return null;

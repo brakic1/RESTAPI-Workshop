@@ -4,8 +4,6 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 public class CommonUtility {
-	public static String path;
-	public static String jsonPathTerm;
 
 	/**
 	 * Set Base URI
@@ -49,22 +47,12 @@ public class CommonUtility {
 	}
 
 	/**
-	 * Set Json path term
+	 * Create search query path
 	 * 
-	 * @param jsonPath
-	 */
-	public static void setJsonPathTerm(String jsonPath) {
-		jsonPathTerm = jsonPath;
-	}
-
-	/**
-	 * Created search query path
-	 * 
-	 * @param searchTerm
 	 * @param param
 	 * @param paramValue
 	 */
-	public static void createSearchQueryPath(String searchTerm, String param, String paramValue) {
-		path = searchTerm + "/" + jsonPathTerm + "?" + param + "=" + paramValue;
+	public static String createQueryParamPath(String param, String paramValue) {
+		return "?" + param + "=" + paramValue;
 	}
 }

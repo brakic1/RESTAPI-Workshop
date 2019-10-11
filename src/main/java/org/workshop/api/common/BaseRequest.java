@@ -1,6 +1,7 @@
 package org.workshop.api.common;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import io.restassured.builder.RequestSpecBuilder;
@@ -9,26 +10,18 @@ import io.restassured.mapper.ObjectMapperType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-public class BaseRequest extends RestClient {
+public class BaseRequest {
 
 	private String host;
 	private String path;
 	private ContentType contentType;
-	private LinkedHashMap<String, String> headers;
-	private LinkedHashMap<String, Object> queryParams;
-	private LinkedHashMap<String, Object> pathParams;
-	@SuppressWarnings("unused")
-	private Response response;
+	private Map<String, String> headers = new HashMap<String, String>();
+	private Map<String, Object> queryParams = new HashMap<String, Object>();
+	private Map<String, Object> pathParams = new HashMap<String, Object>();
 	private Object requestBody;
 	private ObjectMapperType mapper;
 
 	public BaseRequest() {
-	}
-
-	public void setUp() {
-		headerInit();
-		queryParamsInit();
-		pathParamsInit();
 	}
 
 	public void setHost(String host) {
@@ -47,15 +40,11 @@ public class BaseRequest extends RestClient {
 		return path;
 	}
 
-	private void headerInit() {
-		this.headers = new LinkedHashMap<String, String>();
-	}
-
 	public void setHeader(String key, String value) {
 		this.headers.put(key, value);
 	}
 
-	public void setAllHeaders(LinkedHashMap<String, String> headers) {
+	public void setAllHeaders(HashMap<String, String> headers) {
 		this.headers.putAll(headers);
 	}
 
@@ -75,32 +64,24 @@ public class BaseRequest extends RestClient {
 		this.mapper = objectMapperType;
 	}
 
-	private void queryParamsInit() {
-		this.queryParams = new LinkedHashMap<String, Object>();
-	}
-
 	public void setQueryParams(String key, Object value) {
 		this.queryParams.put(key, value);
-	}
-
-	private void pathParamsInit() {
-		this.pathParams = new LinkedHashMap<String, Object>();
 	}
 
 	public void setPathParams(String key, Object value) {
 		this.pathParams.put(key, value);
 	}
 
-	private String getFirstKey(LinkedHashMap<String, Object> params) {
+	private String getFirstKey(Map<String, Object> params) {
 		return params.keySet().stream().findFirst().get();
 	}
 
-	private Object getFirstValue(LinkedHashMap<String, Object> params) {
+	private Object getFirstValue(Map<String, Object> params) {
 		return params.get(getFirstKey(params));
 	}
 
-	public Response doRequest(String method, RequestSpecification requestSpecification) {
-		return this.response = getResponseForMethod(method, requestSpecification);
+	public Response doRequest(RestMethods method, RequestSpecification requestSpecification) {
+		return RestClient.getResponseForMethod(method, requestSpecification);
 	}
 	
 	public RequestSpecification requestSpecification() {
@@ -135,7 +116,4 @@ public class BaseRequest extends RestClient {
 				.setBody(requestBody, mapper).build();
 	}
 
-	public void cleanUp() {
-		this.response = null;
-	}
 }

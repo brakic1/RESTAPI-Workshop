@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.workshop.api.common.BaseRequest;
+import org.workshop.api.common.RestMethods;
 import org.workshop.api.models.Employee;
 import org.workshop.api.models.NewEmployee;
 import org.workshop.api.utilities.ConfigUtility;
@@ -26,35 +26,34 @@ public class EmployeeTests extends BaseRequest {
 
 	@BeforeClass
 	public void setUp() {
-		super.setUp();
-		setHost(ConfigUtility.getProperty("BASE_URL", "application.properties"));
+		setHost(ConfigUtility.getProperty("base.url", "application.properties"));
 		setContentType(ContentType.JSON);
 		setRequestBodyMapper(ObjectMapperType.GSON);
 		RestAssured.registerParser("text/html", Parser.JSON);
 	}
 
 	private NewEmployee createEmployee() {
-		setPath(ConfigUtility.getProperty("CREATE_ENDPOINT", "application.properties"));
+		setPath(ConfigUtility.getProperty("create.endpoint", "application.properties"));
 		setRequestBody(new NewEmployee());
 		
-		Response response = doRequest("POST", requestSpecificationWithBody());
+		Response response = doRequest(RestMethods.POST, requestSpecificationWithBody());
 		return response.getBody().as(NewEmployee.class);
 	}
 
 	private void removeEmployee(String id) {
-		setPath(ConfigUtility.getProperty("DELETE_ENDPOINT", "application.properties") + "/{id}");
+		setPath(ConfigUtility.getProperty("delete.endpoint", "application.properties") + "/{id}");
 		setPathParams("id", id);
 
-		doRequest("DELETE", requestSpecificationWithPathParm());
+		doRequest(RestMethods.DELETE, requestSpecificationWithPathParm());
 	}
 
 	@Test
 	public void getAllEmployees() {
 
 		// arrange
-		setPath(ConfigUtility.getProperty("EMPLOYEES_ENDPOINT", "application.properties"));
+		setPath(ConfigUtility.getProperty("employees.endpoint", "application.properties"));
 		// act
-		Response response = doRequest("GET", requestSpecification());
+		Response response = doRequest(RestMethods.GET, requestSpecification());
 		// assert
 		List<Employee> employees = response.body().jsonPath().getList("", Employee.class);
 		for (Employee employee : employees) {
@@ -65,11 +64,11 @@ public class EmployeeTests extends BaseRequest {
 	@Test
 	public void addNewEmployee() {
 		// arrange
-		setPath(ConfigUtility.getProperty("CREATE_ENDPOINT", "application.properties"));
+		setPath(ConfigUtility.getProperty("create.endpoint", "application.properties"));
 		NewEmployee employee = new NewEmployee();
 		setRequestBody(employee);
 		// act
-		Response response = doRequest("POST", requestSpecificationWithBody());
+		Response response = doRequest(RestMethods.POST, requestSpecificationWithBody());
 		// assert
 		NewEmployee responseObj = response.getBody().as(NewEmployee.class);
 		Assert.assertEquals(responseObj.getEmployeeName(), employee.getEmployeeName());
@@ -83,10 +82,10 @@ public class EmployeeTests extends BaseRequest {
 	public void getEmployeeById() {
 		// arrange
 		String id = createEmployee().getId();
-		setPath(ConfigUtility.getProperty("EMPLOYEE_ENDPOINT", "application.properties") + "/{id}");
+		setPath(ConfigUtility.getProperty("employee.endpoint", "application.properties") + "/{id}");
 		setPathParams("id", id);
 		// act
-		Response response = doRequest("GET", requestSpecificationWithPathParm());
+		Response response = doRequest(RestMethods.GET, requestSpecificationWithPathParm());
 		// assert
 		Employee responseObj = response.getBody().as(Employee.class);
 		Assert.assertEquals(responseObj.getId(), id);
@@ -99,13 +98,13 @@ public class EmployeeTests extends BaseRequest {
 		// arrange
 		NewEmployee employee = createEmployee();
 		String id = employee.getId();
-		setPath(ConfigUtility.getProperty("UPDATE_ENDPOINT", "application.properties") + "/{id}");
+		setPath(ConfigUtility.getProperty("update.endpoint", "application.properties") + "/{id}");
 		setPathParams("id", id);
 		// change employee and used the changed object for body request
 		NewEmployee updatedEmployee = employee.name(RandomStringUtils.randomAlphabetic(10));
 		setRequestBody(updatedEmployee);
 		// act
-		Response response = doRequest("PUT", requestSpecificationWithBodyAndPathParm());
+		Response response = doRequest(RestMethods.PUT, requestSpecificationWithBodyAndPathParm());
 		// assert
 		NewEmployee responseObj = response.getBody().as(NewEmployee.class);
 		Assert.assertEquals(responseObj.getEmployeeName(), updatedEmployee.getEmployeeName());
@@ -118,9 +117,9 @@ public class EmployeeTests extends BaseRequest {
 	public void deleteEmployee() {
 		// arrange
 		setPathParams("id", createEmployee().getId());
-		setPath(ConfigUtility.getProperty("DELETE_ENDPOINT", "application.properties") + "/{id}");
+		setPath(ConfigUtility.getProperty("delete.endpoint", "application.properties") + "/{id}");
 		// act
-		Response response = doRequest("DELETE", requestSpecificationWithPathParm());
+		Response response = doRequest(RestMethods.DELETE, requestSpecificationWithPathParm());
 		// assert
 		Assert.assertTrue(
 				response.getBody().asString().endsWith("{\"success\":{\"text\":\"successfully! deleted Records\"}}"));
@@ -129,15 +128,10 @@ public class EmployeeTests extends BaseRequest {
 	@Test
 	public void deleteEmployeeUsingMatchers() {
 		// arrange
-		String path = ConfigUtility.getProperty("DELETE_ENDPOINT", "application.properties");
-		String baseUrl = ConfigUtility.getProperty("BASE_URL", "application.properties");
+		String path = ConfigUtility.getProperty("delete.endpoint", "application.properties");
+		String baseUrl = ConfigUtility.getProperty("base.url", "application.properties");
 		// act and assert
 		RestAssured.delete(baseUrl + path + "/" + createEmployee().getId()).then().assertThat()
 				.body(equalTo("{\"success\":{\"text\":\"successfully! deleted Records\"}}"));
-	}
-
-	@AfterMethod
-	public void tearDown() {
-		cleanUp();
 	}
 }
