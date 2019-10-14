@@ -32,6 +32,12 @@ public class Employee {
 		this.employee_salary = RandomStringUtils.randomNumeric(4).toString();
 		this.employee_age = RandomStringUtils.randomNumeric(2).toString();
 	}
+	
+	public Employee(String employee_name, String employee_salary, String employee_age) {
+		this.employee_name = employee_name;
+		this.employee_salary = employee_salary;
+		this.employee_age = employee_age;
+	}
 
 	public Employee id(String id) {
 		this.id = id;

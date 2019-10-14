@@ -49,7 +49,6 @@ public class EmployeeTests extends BaseRequest {
 
 	@Test
 	public void getAllEmployees() {
-
 		// arrange
 		setPath(ConfigUtility.getProperty("employees.endpoint", "application.properties"));
 		// act
